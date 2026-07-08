@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Exercise Grey Heron - a five-minute crisis decision simulation. Six timed injects, a live decision log, and a scored debrief with facilitator notes." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#128737;</text></svg>" />
+<title>Exercise Grey Heron — Crisis Decision Simulation</title>
+<style>
+  :root {
+    --bg: #10151c;
+    --panel: #171e29;
+    --panel-2: #1c2431;
+    --line: rgba(150, 168, 194, 0.14);
+    --ink: #dbe1ea;
+    --dim: #8b95a6;
+    --amber: #e8a33d;
+    --amber-soft: rgba(232, 163, 61, 0.12);
+    --good: #46b380;
+    --warn: #e8a33d;
+    --crit: #d95c5c;
+    --mono: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+  }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+  .exbanner {
+    background: var(--amber-soft);
+    border-bottom: 1px solid rgba(232, 163, 61, 0.3);
+    color: var(--amber);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-align: center;
+    padding: 7px 12px;
+    text-transform: uppercase;
+  }
+
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(28px, 4.5vw, 42px);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  h2 { font-size: 21px; font-weight: 650; margin: 0 0 8px; text-wrap: balance; }
+  .lede { font-size: 16.5px; color: var(--dim); max-width: 62ch; margin: 0 0 26px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- briefing ---------- */
+  .brief-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 26px; }
+  @media (max-width: 760px) { .brief-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px 24px;
+  }
+  .card h3 {
+    margin: 0 0 12px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim);
+    font-weight: 600;
+  }
+  .card p { margin: 0 0 10px; font-size: 15px; color: var(--ink); }
+  .card p:last-child { margin-bottom: 0; }
+  .spec { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14.5px; }
+  .spec dt { color: var(--dim); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; padding-top: 2px; }
+  .spec dd { margin: 0; }
+
+  .btn-primary {
+    background: var(--amber);
+    color: #17130a;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 30px;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 26px;
+    font-size: 15px;
+  }
+  .btn-ghost:hover { border-color: var(--dim); }
+
+  /* ---------- simulation ---------- */
+  .sim-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px; margin-bottom: 22px;
+  }
+  .sim-head .exname { font-family: var(--mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+  .sim-head .exname b { color: var(--ink); font-weight: 600; }
+  .simclock { font-family: var(--mono); font-size: 15px; color: var(--amber); font-variant-numeric: tabular-nums; }
+  .progress { font-family: var(--mono); font-size: 12px; color: var(--dim); letter-spacing: 0.08em; }
+
+  .sim-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 860px) { .sim-grid { grid-template-columns: 1fr; } }
+
+  .inject {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .inject-meta {
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 12px 22px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+  }
+  .inject-meta .src { color: var(--amber); }
+  .inject-meta .tm { color: var(--dim); font-variant-numeric: tabular-nums; }
+  .inject-body { padding: 20px 22px 22px; }
+  .inject-body .msg { font-size: 16.5px; margin: 0 0 18px; max-width: 60ch; }
+  .inject-body .ask {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--dim); margin: 0 0 10px;
+  }
+  .opts { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    text-align: left;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 13px 16px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.45;
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }
+  .opt:hover { border-color: var(--amber); background: rgba(232,163,61,0.06); }
+  .opt .key {
+    font-family: var(--mono); font-size: 12px; color: var(--amber);
+    margin-right: 10px; font-weight: 600;
+  }
+
+  .timerline { height: 4px; background: var(--panel-2); }
+  .timerline .fill { height: 100%; background: var(--amber); width: 100%; }
+  .timerline .fill.low { background: var(--crit); }
+  .timer-label {
+    font-family: var(--mono); font-size: 12px; color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .timer-label.low { color: var(--crit); }
+
+  .outcome { padding: 20px 22px 22px; }
+  .outcome .tag {
+    display: inline-block;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--amber);
+    border: 1px solid rgba(232,163,61,0.4); border-radius: 4px;
+    padding: 3px 9px; margin-bottom: 14px;
+  }
+  .outcome p { font-size: 16px; margin: 0 0 20px; max-width: 58ch; }
+
+  .logpanel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .logpanel h3 {
+    margin: 0 0 12px;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--dim); font-weight: 600;
+  }
+  .logpanel ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .logpanel li {
+    font-size: 13px; color: var(--ink);
+    display: grid; grid-template-columns: auto 1fr; gap: 10px;
+    padding-bottom: 9px; border-bottom: 1px dashed var(--line);
+  }
+  .logpanel li:last-child { border-bottom: none; padding-bottom: 0; }
+  .logpanel .lt { font-family: var(--mono); font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .logpanel .empty { color: var(--dim); font-size: 13.5px; font-style: italic; }
+  .logpanel li.missed .ld { color: var(--crit); }
+
+  /* ---------- debrief ---------- */
+  .verdict {
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 24px; margin-bottom: 20px;
+  }
+  .score-ring { position: relative; width: 110px; height: 110px; flex: none; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .num {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: var(--mono); font-size: 26px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .verdict-text h2 { margin-bottom: 6px; }
+  .verdict-text p { margin: 0; color: var(--dim); font-size: 15px; max-width: 52ch; }
+
+  .caps { display: flex; flex-direction: column; gap: 13px; }
+  .cap { display: grid; grid-template-columns: 220px 1fr auto; gap: 14px; align-items: center; }
+  @media (max-width: 640px) { .cap { grid-template-columns: 1fr; gap: 5px; } }
+  .cap .nm { font-size: 14.5px; }
+  .cap .track { height: 8px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
+  .cap .bar { height: 100%; border-radius: 4px; }
+  .cap .pct { font-family: var(--mono); font-size: 13px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+
+  .review { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .rev {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .rev .rt {
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    color: var(--dim); margin-bottom: 8px;
+  }
+  .rev .chip {
+    font-family: var(--mono); font-size: 11px; padding: 2px 9px; border-radius: 999px;
+    letter-spacing: 0.06em;
+  }
+  .chip.g { background: rgba(70,179,128,0.14); color: var(--good); }
+  .chip.w { background: rgba(232,163,61,0.14); color: var(--warn); }
+  .chip.r { background: rgba(217,92,92,0.14); color: var(--crit); }
+  .rev .yours { font-size: 14.5px; margin: 0 0 10px; }
+  .rev .yours b { font-weight: 600; }
+  .rev .note {
+    font-size: 14px; color: var(--dim); margin: 0;
+    border-left: 2px solid var(--amber); padding-left: 12px;
+  }
+  .rev .note b { color: var(--amber); font-weight: 600; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+  .pitch {
+    margin-top: 34px;
+    border-top: 1px solid var(--line);
+    padding-top: 30px;
+  }
+  .pitch .lede { margin-bottom: 22px; }
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+  @media (max-width: 760px) { .svc-grid { grid-template-columns: 1fr; } }
+  .svc {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 20px;
+  }
+  .svc h3 { margin: 0 0 8px; font-size: 16px; font-weight: 650; }
+  .svc p { margin: 0; font-size: 14px; color: var(--dim); }
+
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  footer {
+    margin-top: 44px; padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--dim);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  footer b { color: var(--ink); font-weight: 600; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .screen.active { animation: rise 0.35s ease; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+
+<div class="exbanner">Exercise · Exercise · Exercise — this is a simulation</div>
+
+<div class="wrap">
+
+  <!-- ============ BRIEFING ============ -->
+  <section class="screen active" id="scr-brief">
+    <p class="eyebrow">Rapid decision simulation · ~5 minutes</p>
+    <h1>Exercise Grey Heron</h1>
+    <p class="lede">It's <strong>Monday, 08:47</strong>. Your systems are locked, your phones are ringing,
+      and a journalist already knows more than you do. Six decisions stand between you and the
+      evening news. <strong>You have 45 seconds for each one.</strong></p>
+
+    <div class="brief-grid">
+      <div class="card">
+        <h3>Situation</h3>
+        <p>You are the senior leader on site at a mid-sized organisation. A cyber incident is
+          unfolding in real time. Information will arrive as it does in real incidents:
+          incomplete, from multiple directions, and faster than you'd like.</p>
+        <p>There are no trick questions — but there are consequences. Every choice is logged,
+          timed, and debriefed at the end, exactly as it would be in a facilitated exercise.</p>
+      </div>
+      <div class="card">
+        <h3>Exercise conventions</h3>
+        <dl class="spec">
+          <dt>INJECTS</dt><dd>6, delivered in sequence</dd>
+          <dt>TEMPO</dt><dd>45 seconds per decision</dd>
+          <dt>NO ANSWER</dt><dd>logged as a decision too</dd>
+          <dt>ASSESSED</dt><dd>5 crisis capabilities</dd>
+          <dt>DEBRIEF</dt><dd>scored, with facilitator notes</dd>
+        </dl>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnStart">Take command</button>
+  </section>
+
+  <!-- ============ SIMULATION ============ -->
+  <section class="screen" id="scr-sim">
+    <div class="sim-head">
+      <span class="exname"><b>GREY HERON</b> · live</span>
+      <span class="progress" id="progress">Inject 1 of 6</span>
+      <span class="simclock" id="simclock">08:47</span>
+    </div>
+
+    <div class="sim-grid">
+      <div class="inject" id="injectCard">
+        <div class="timerline"><div class="fill" id="timerFill"></div></div>
+        <div class="inject-meta">
+          <span class="src" id="injSrc"></span>
+          <span><span class="timer-label" id="timerLabel">0:45</span>&nbsp;&nbsp;<span class="tm" id="injTime"></span></span>
+        </div>
+        <div class="inject-body" id="injBody">
+          <p class="msg" id="injMsg"></p>
+          <p class="ask">Your call —</p>
+          <div class="opts" id="opts"></div>
+        </div>
+        <div class="outcome" id="outBody" hidden>
+          <span class="tag">Outcome</span>
+          <p id="outText"></p>
+          <button class="btn-primary" id="btnNext">Next inject →</button>
+        </div>
+      </div>
+
+      <aside class="logpanel" aria-label="Decision log">
+        <h3>Decision log</h3>
+        <ol id="loglist"><li class="empty">No decisions recorded yet.</li></ol>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ DEBRIEF ============ -->
+  <section class="screen" id="scr-debrief">
+    <p class="eyebrow">Exercise complete · hot debrief</p>
+    <h1 id="verdictTitle">Debrief</h1>
+
+    <div class="verdict">
+      <div class="score-ring">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="47" fill="none" stroke="#1c2431" stroke-width="9"/>
+          <circle id="ringArc" cx="55" cy="55" r="47" fill="none" stroke="#e8a33d" stroke-width="9"
+                  stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="295.3"/>
+        </svg>
+        <div class="num" id="ringNum">0%</div>
+      </div>
+      <div class="verdict-text">
+        <h2 id="verdictHead"></h2>
+        <p id="verdictBody"></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <h3>Capability scores</h3>
+      <div class="caps" id="caps"></div>
+    </div>
+
+    <h2 style="margin-top:28px;">Decision-by-decision review</h2>
+    <div class="review" id="review"></div>
+
+    <div class="pitch">
+      <p class="eyebrow">Why this matters</p>
+      <h2>You just made six decisions in five minutes.<br>A real incident asks for hundreds.</h2>
+      <p class="lede">This taster used a generic scenario and a solo player. A facilitated exercise
+        uses <strong>your</strong> plans, <strong>your</strong> people and <strong>your</strong> most plausible bad day —
+        and finds the gaps while they're still cheap to fix.</p>
+
+      <div class="svc-grid">
+        <div class="svc">
+          <h3>Business continuity reviews</h3>
+          <p>A structured, evidence-based review of your plans, recovery priorities and single
+            points of failure — with a prioritised roadmap, not a shelf document.</p>
+        </div>
+        <div class="svc">
+          <h3>Crisis management training</h3>
+          <p>Practical training for crisis teams and leaders: roles, decision logging,
+            communications under pressure, and working with incomplete information.</p>
+        </div>
+        <div class="svc">
+          <h3>Tabletop &amp; live-play exercises</h3>
+          <p>Bespoke scenarios delivered at your tempo — from boardroom tabletops to multi-team
+            live play with real injects, media pressure and a full structured debrief.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="btnContact">Book a conversation</button>
+        <button class="btn-ghost" id="btnRetry">Run the exercise again</button>
+      </div>
+    </div>
+
+    <footer>
+      <span>Designed and facilitated by <b>Helen Salvini</b> · Business Continuity &amp; Crisis Management</span>
+      <span>Exercise Grey Heron · v1.0</span>
+    </footer>
+  </section>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const CAPS = ['Decision-making', 'Communications', 'Continuity of operations', 'People & welfare', 'Reputation'];
+
+  // scores: [decision, comms, continuity, people, reputation]
+  const INJECTS = [
+    {
+      time: '08:47', src: 'IT SERVICE DESK · PHONE',
+      msg: 'Multiple servers are showing a ransom note. Order processing, payments and the customer portal are down. IT can’t yet say how far it has spread — or whether data has been taken.',
+      note: 'The first decision in any incident is whether you’re in one. Activating early with a log and named roles costs almost nothing; activating late costs you the golden hour — and every decision made before the log starts is invisible to regulators, insurers and lawyers.',
+      opts: [
+        { t: 'Ask IT to investigate and report back within the hour.', log: 'Waited for IT assessment', s: [0,0,0,0,0],
+          o: 'An hour passes with no structure. By the time the crisis team convenes, staff and social media have already framed the story for you — and nobody wrote anything down.' },
+        { t: 'Activate the crisis management team now: open a decision log, assign roles, set the first meeting rhythm.', log: 'Activated crisis team, opened log', s: [2,0,1,0,0],
+          o: 'The team convenes by 09:05. Roles are clear, a log is running, and every decision from here is timed and defensible. You’ve bought back the golden hour.' },
+        { t: 'Pull the senior team together informally — no log or fixed roles until you know more.', log: 'Informal huddle, no log', s: [1,0,0,0,0],
+          o: 'The right people are in the room, but with no log and no roles, decisions get revisited, duplicated and lost. In three hours nobody can say who agreed what.' }
+      ]
+    },
+    {
+      time: '09:10', src: 'RECEPTION / COMMUNICATIONS',
+      msg: 'A trade journalist is on the phone asking directly whether you’ve been hit by ransomware. Meanwhile staff are speculating openly on social media — one post already has screenshots.',
+      note: 'In a vacuum, someone else writes your story. A short, honest holding statement — acknowledge, reassure, commit to updates — buys hours of control. “No comment” reads as confirmation; denial risks being disproven by teatime.',
+      opts: [
+        { t: 'Decline all comment and instruct staff not to discuss the incident.', log: 'No comment, staff gag', s: [0,0,0,0,0],
+          o: '“No comment” becomes the quote. The story runs anyway, sourced from staff screenshots, and now it has the word “secretive” in it.' },
+        { t: 'Deny it’s ransomware until forensics can confirm exactly what happened.', log: 'Denied ransomware', s: [0,0,0,0,0],
+          o: 'Forensics confirm ransomware at 14:00. Your morning denial is now part of the story — and every future statement gets fact-checked against it.' },
+        { t: 'Issue a short holding statement: we’re managing an IT incident, investigating, and will update by 12:00.', log: 'Holding statement issued', s: [0,2,0,0,1],
+          o: 'The journalist runs a measured piece quoting your statement. You’ve set the rhythm: you now owe an update at noon — and you control what’s in it.' }
+      ]
+    },
+    {
+      time: '09:35', src: 'OPERATIONS MANAGER',
+      msg: 'We can keep priority orders moving on manual processes — paper picking lists, phone confirmations — but it needs overtime sign-off and we’ll run at about 40% capacity. Do we invoke the business continuity plan?',
+      note: 'Plans only pay out when someone invokes them. 40% capacity on your top customers beats 0% on everyone — and “IT might fix it by tonight” is a hope, not a plan. Invocation criteria decided in advance make this a 30-second call, not a 30-minute debate.',
+      opts: [
+        { t: 'Invoke the BCP: manual processes for priority customers, overtime approved.', log: 'Invoked BCP, manual workaround', s: [1,0,2,0,0],
+          o: 'By 11:00, priority orders are moving. Slowly, imperfectly — but your biggest customers see deliveries, not silence.' },
+        { t: 'Halt all operations until systems are properly restored — safer than improvising.', log: 'Halted all operations', s: [0,0,0,0,0],
+          o: 'The line goes quiet. Every hour of clean shutdown is an hour your customers spend testing their alternative suppliers.' },
+        { t: 'Hold off — IT believe they might restore from backups by tonight.', log: 'Waited on backup restore', s: [0,0,0,0,0],
+          o: 'At 16:00 IT report the backups were encrypted too. You’ve lost the day, and the manual workaround now starts a shift behind.' }
+      ]
+    },
+    {
+      time: '10:15', src: 'IT DIRECTOR · CRISIS ROOM',
+      msg: 'The demand is in: payment in 48 hours or the data goes public. Forensics say personal data — possibly including customer records — may have been accessed. Legal exposure is unclear.',
+      note: 'The regulatory clock doesn’t wait for certainty — the 72-hour assessment window starts when you become aware, not when you’re sure. Insurers can void cover if engaged late, and negotiating alone can do exactly that. Escalate outwards early: insurer, counsel, regulator assessment.',
+      opts: [
+        { t: 'Open a direct line to the attackers to negotiate and buy time.', log: 'Negotiated with attackers', s: [0,0,0,0,0],
+          o: 'Your insurer later confirms that unauthorised negotiation breached the policy conditions. You’re now managing the incident — and the cover dispute.' },
+        { t: 'Notify the insurer and legal counsel now, and start the regulator’s 72-hour breach assessment clock.', log: 'Notified insurer, legal, regulator clock', s: [2,0,0,0,1],
+          o: 'The insurer assigns specialist responders within the hour; counsel takes the negotiation question off your desk. The regulatory position is documented from the start.' },
+        { t: 'Wait for forensics to confirm what was actually taken before telling anyone external.', log: 'Withheld external notification', s: [0,0,0,0,0],
+          o: 'Forensics take four days. The regulator’s first question is why the assessment started on day three of a 72-hour window.' }
+      ]
+    },
+    {
+      time: '11:20', src: 'HR DIRECTOR',
+      msg: 'Staff are anxious and rumours are outrunning you: the canteen version says payroll data is stolen and Friday’s pay run will fail. Two people have asked if they should be freezing their bank cards.',
+      note: 'Your staff are your most credible channel — or your most damaging one. “What we know, what we don’t, when we’ll update you” works even with almost no facts. Cascades leak and mutate; silence gets filled by the canteen.',
+      opts: [
+        { t: 'Brief line managers only and let them cascade “as appropriate”.', log: 'Manager-only cascade', s: [0,0,0,1,0],
+          o: 'The cascade arrives unevenly — some teams get a careful briefing, others get corridor whispers. The payroll rumour survives in the gaps.' },
+        { t: 'Say nothing to staff until you’re certain what data was affected.', log: 'No staff comms yet', s: [0,0,0,0,0],
+          o: 'By mid-afternoon the rumour has jumped to a local Facebook group — posted by one of your own staff, asking if anyone else is worried.' },
+        { t: 'Brief all staff at 12:00: what we know, what we don’t, when the next update comes — and a firm commitment that pay will run.', log: 'All-staff briefing, pay guaranteed', s: [0,1,0,2,0],
+          o: 'The briefing lands. The payroll rumour dies in the room, and staff start correcting misinformation instead of spreading it.' }
+      ]
+    },
+    {
+      time: '13:30', src: 'SALES DIRECTOR · URGENT',
+      msg: 'Your largest customer — 28% of revenue — has seen the media coverage. Their procurement lead is asking, in writing, whether they should activate their alternative supplier “as a precaution”.',
+      note: 'Key accounts in a crisis need a person, not a press line. A senior, honest call — status, recovery plan, a named contact, a daily update — converts your biggest commercial risk into your most vocal reference. Discounts signal panic; boilerplate signals indifference.',
+      opts: [
+        { t: 'The CEO calls their MD personally: honest status, the recovery plan, and a committed daily update.', log: 'CEO called key customer directly', s: [0,0,1,0,2],
+          o: 'The call lasts eleven minutes. They stay — and their procurement lead later tells your sales director it was the call, not the plan, that convinced them.' },
+        { t: 'Send them the same holding statement the press received.', log: 'Sent press statement to customer', s: [0,0,0,0,0],
+          o: 'A 28%-of-revenue customer gets the same paragraph as a trade blog. They activate their alternative supplier “temporarily”. Temporarily lasts three years.' },
+        { t: 'Offer a discount on their next order as a goodwill gesture.', log: 'Offered discount', s: [0,0,0,0,0],
+          o: 'The discount reads as desperation. Procurement pockets it — and activates the alternative supplier anyway, now at a better price.' }
+      ]
+    }
+  ];
+
+  const TIMEOUT_OUTCOME = 'The moment passed with no decision recorded. In a live incident, silence is itself a decision — and it’s rarely the right one.';
+  const TIME_LIMIT = 45;
+
+  // ---- state ----
+  let idx = 0;
+  let choices = [];           // {optIndex|null}
+  let timerId = null;
+  let remaining = TIME_LIMIT;
+
+  const $ = id => document.getElementById(id);
+  const screens = { brief: $('scr-brief'), sim: $('scr-sim'), debrief: $('scr-debrief') };
+
+  function show(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+    window.scrollTo({ top: 0 });
+  }
+
+  // ---- simulation flow ----
+  function startExercise() {
+    idx = 0; choices = [];
+    $('loglist').innerHTML = '<li class="empty">No decisions recorded yet.</li>';
+    show('sim');
+    presentInject();
+  }
+
+  function presentInject() {
+    const inj = INJECTS[idx];
+    $('progress').textContent = `Inject ${idx + 1} of ${INJECTS.length}`;
+    $('simclock').textContent = inj.time;
+    $('injSrc').textContent = inj.src;
+    $('injTime').textContent = inj.time;
+    $('injMsg').textContent = inj.msg;
+    $('injBody').hidden = false;
+    $('outBody').hidden = true;
+
+    const opts = $('opts');
+    opts.innerHTML = '';
+    inj.opts.forEach((opt, i) => {
+      const b = document.createElement('button');
+      b.className = 'opt';
+      b.innerHTML = `<span class="key">${String.fromCharCode(65 + i)}</span>`;
+      b.appendChild(document.createTextNode(opt.t));
+      b.addEventListener('click', () => choose(i));
+      opts.appendChild(b);
+    });
+
+    startTimer();
+  }
+
+  function startTimer() {
+    stopTimer();
+    remaining = TIME_LIMIT;
+    updateTimerUI();
+    timerId = setInterval(() => {
+      remaining -= 0.1;
+      if (remaining <= 0) { remaining = 0; updateTimerUI(); choose(null); return; }
+      updateTimerUI();
+    }, 100);
+  }
+
+  function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+  function updateTimerUI() {
+    const fill = $('timerFill'), label = $('timerLabel');
+    const frac = remaining / TIME_LIMIT;
+    fill.style.width = (frac * 100) + '%';
+    const secs = Math.ceil(remaining);
+    label.textContent = '0:' + String(secs).padStart(2, '0');
+    const low = remaining <= 10;
+    fill.classList.toggle('low', low);
+    label.classList.toggle('low', low);
+  }
+
+  function choose(optIndex) {
+    stopTimer();
+    const inj = INJECTS[idx];
+    choices.push({ optIndex });
+
+    // log entry
+    const list = $('loglist');
+    if (list.querySelector('.empty')) list.innerHTML = '';
+    const li = document.createElement('li');
+    const missed = optIndex === null;
+    if (missed) li.className = 'missed';
+    li.innerHTML = `<span class="lt">${inj.time}</span><span class="ld"></span>`;
+    li.querySelector('.ld').textContent = missed ? 'No decision recorded' : inj.opts[optIndex].log;
+    list.appendChild(li);
+
+    // outcome
+    $('injBody').hidden = true;
+    $('outText').textContent = missed ? TIMEOUT_OUTCOME : inj.opts[optIndex].o;
+    $('outBody').hidden = false;
+    $('btnNext').textContent = idx === INJECTS.length - 1 ? 'Go to debrief →' : 'Next inject →';
+    $('btnNext').focus();
+  }
+
+  function next() {
+    idx++;
+    if (idx >= INJECTS.length) { debrief(); return; }
+    presentInject();
+  }
+
+  // ---- debrief ----
+  function debrief() {
+    const totals = CAPS.map(() => 0);
+    const maxes = CAPS.map((_, c) =>
+      INJECTS.reduce((sum, inj) => sum + Math.max(...inj.opts.map(o => o.s[c])), 0));
+
+    choices.forEach((ch, i) => {
+      if (ch.optIndex === null) return;
+      INJECTS[i].opts[ch.optIndex].s.forEach((v, c) => totals[c] += v);
+    });
+
+    const pts = totals.reduce((a, b) => a + b, 0);
+    const max = maxes.reduce((a, b) => a + b, 0);
+    const pct = Math.round((pts / max) * 100);
+
+    // verdict
+    let head, body;
+    if (pct >= 80) {
+      head = 'Strong crisis instincts.';
+      body = 'You held structure, communicated early and kept the organisation moving. A facilitated exercise would stress-test those instincts at full depth — with your real plans, your real team, and a scenario built for your risks.';
+    } else if (pct >= 50) {
+      head = 'Solid foundations — with gaps showing.';
+      body = 'Some calls bought you control; others gave it away. Those gaps are exactly what a facilitated exercise surfaces safely — before a real incident surfaces them expensively.';
+    } else {
+      head = 'This is precisely why organisations exercise.';
+      body = 'Under time pressure, untested instincts default to delay and silence — the two most expensive habits in crisis response. The fix isn’t a thicker plan; it’s rehearsal.';
+    }
+    $('verdictHead').textContent = head;
+    $('verdictBody').textContent = body;
+    $('verdictTitle').textContent = 'Hot debrief';
+
+    // ring
+    const circ = 295.3;
+    const arc = $('ringArc');
+    arc.style.stroke = pct >= 75 ? '#46b380' : pct >= 40 ? '#e8a33d' : '#d95c5c';
+    $('ringNum').textContent = pct + '%';
+    show('debrief');
+    requestAnimationFrame(() => {
+      arc.style.transition = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'stroke-dashoffset 1s ease';
+      arc.style.strokeDashoffset = String(circ * (1 - pct / 100));
+    });
+
+    // capability bars
+    const capsEl = $('caps');
+    capsEl.innerHTML = '';
+    CAPS.forEach((name, c) => {
+      const p = maxes[c] ? Math.round((totals[c] / maxes[c]) * 100) : 0;
+      const col = p >= 75 ? 'var(--good)' : p >= 40 ? 'var(--warn)' : 'var(--crit)';
+      const row = document.createElement('div');
+      row.className = 'cap';
+      row.innerHTML = `<span class="nm"></span>
+        <div class="track"><div class="bar" style="width:${p}%;background:${col}"></div></div>
+        <span class="pct">${p}%</span>`;
+      row.querySelector('.nm').textContent = name;
+      capsEl.appendChild(row);
+    });
+
+    // decision review
+    const rev = $('review');
+    rev.innerHTML = '';
+    INJECTS.forEach((inj, i) => {
+      const ch = choices[i];
+      const missed = !ch || ch.optIndex === null;
+      const got = missed ? 0 : inj.opts[ch.optIndex].s.reduce((a, b) => a + b, 0);
+      const best = Math.max(...inj.opts.map(o => o.s.reduce((a, b) => a + b, 0)));
+      const band = got >= best ? 'g' : got > 0 ? 'w' : 'r';
+      const bandLabel = got >= best ? 'Strong call' : got > 0 ? 'Partial credit' : missed ? 'No decision' : 'Costly call';
+
+      const div = document.createElement('div');
+      div.className = 'rev';
+      div.innerHTML = `
+        <div class="rt"><span>INJECT ${i + 1} · ${inj.time} · ${inj.src}</span>
+          <span class="chip ${band}">${bandLabel} · ${got}/${best}</span></div>
+        <p class="yours"><b>Your call:</b> <span class="yc"></span></p>
+        <p class="note"><b>Facilitator’s note</b><br><span class="fn"></span></p>`;
+      div.querySelector('.yc').textContent = missed ? 'No decision recorded before the moment passed.' : inj.opts[ch.optIndex].t;
+      div.querySelector('.fn').textContent = inj.note;
+      rev.appendChild(div);
+    });
+  }
+
+  // ---- wiring ----
+  $('btnStart').addEventListener('click', startExercise);
+  $('btnNext').addEventListener('click', next);
+  $('btnRetry').addEventListener('click', startExercise);
+  $('btnContact').addEventListener('click', () => {
+    location.href = 'mailto:helensalvini76@gmail.com?subject=Crisis%20exercise%20enquiry%20%E2%80%94%20Exercise%20Grey%20Heron';
+  });
+
+  // keyboard: A/B/C to answer while options are visible
+  addEventListener('keydown', e => {
+    if (!screens.sim.classList.contains('active') || $('injBody').hidden) return;
+    const k = e.key.toUpperCase();
+    const i = ['A', 'B', 'C'].indexOf(k);
+    if (i >= 0 && INJECTS[idx].opts[i]) choose(i);
+  });
+})();
+</script>
+
+</body>
+</html>
