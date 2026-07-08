@@ -707,7 +707,9 @@
   $('btnNext').addEventListener('click', next);
   $('btnRetry').addEventListener('click', startExercise);
   $('btnContact').addEventListener('click', () => {
-    location.href = 'mailto:helensalvini76@gmail.com?subject=Crisis%20exercise%20enquiry%20%E2%80%94%20Exercise%20Grey%20Heron';
+    // address kept split so it never appears whole in the page source (deters spam scrapers)
+    const E_U = 'helen', E_D = 'bcrconsultants.co.uk';
+    location.href = 'mailto:' + E_U + '@' + E_D + '?subject=' + encodeURIComponent('Crisis exercise enquiry — Exercise Grey Heron');
   });
 
   // keyboard: A/B/C to answer while options are visible
