@@ -302,15 +302,16 @@
   <section class="screen active" id="scr-brief">
     <p class="eyebrow">Rapid decision simulation · ~5 minutes</p>
     <h1>Exercise Mercury</h1>
-    <p class="lede">It's <strong>Monday, 08:47</strong>. Your systems are locked, your phones are ringing,
-      and a journalist already knows more than you do. Six decisions stand between you and the
-      evening news. <strong>You have 45 seconds for each one.</strong></p>
+    <p class="lede">It's <strong>Thursday, 06:15</strong>. A red weather warning has just landed, the power
+      is already flickering, and local radio wants answers before you've had coffee. Six decisions
+      stand between you and the evening news. <strong>You have 45 seconds for each one.</strong></p>
 
     <div class="brief-grid">
       <div class="card">
         <h3>Situation</h3>
-        <p>You are the senior leader on site at a mid-sized organisation. A cyber incident is
-          unfolding in real time. Information will arrive as it does in real incidents:
+        <p>You are the senior leader on duty at an organisation that delivers essential services
+          to the public. A severe storm — high winds, a month's rain, widespread power cuts —
+          arrives in hours. Information will arrive as it does in real incidents:
           incomplete, from multiple directions, and faster than you'd like.</p>
         <p>There are no trick questions — but there are consequences. Every choice is logged,
           timed, and debriefed at the end, exactly as it would be in a facilitated exercise.</p>
@@ -335,7 +336,7 @@
     <div class="sim-head">
       <span class="exname"><b>MERCURY</b> · live</span>
       <span class="progress" id="progress">Inject 1 of 6</span>
-      <span class="simclock" id="simclock">08:47</span>
+      <span class="simclock" id="simclock">06:15</span>
     </div>
 
     <div class="sim-grid">
@@ -440,81 +441,81 @@
   // scores: [decision, comms, continuity, people, reputation]
   const INJECTS = [
     {
-      time: '08:47', src: 'IT SERVICE DESK · PHONE',
-      msg: 'Multiple servers are showing a ransom note. Order processing, payments and the customer portal are down. IT can’t yet say how far it has spread — or whether data has been taken.',
-      note: 'The first decision in any incident is whether you’re in one. Activating early with a log and named roles costs almost nothing; activating late costs you the golden hour — and every decision made before the log starts is invisible to regulators, insurers and lawyers.',
+      time: '06:15', src: 'DUTY MANAGER · PHONE',
+      msg: 'The Met Office has upgraded last night’s amber warning to a red warning — 90mph gusts and a month’s rain by mid-afternoon. Power at your main site is already flickering, two buildings are reporting leaks, and local radio has asked whether your services will run today.',
+      note: 'A red warning buys you something incidents rarely offer: notice. Activating on the forecast — with a log and named roles — costs an hour of people’s morning. Activating on the damage costs you the shape of the whole response. And if it blows through harmlessly? You’ve had a free exercise.',
       opts: [
-        { t: 'Ask IT to investigate and report back within the hour.', log: 'Waited for IT assessment', s: [0,0,0,0,0],
-          o: 'An hour passes with no structure. By the time the crisis team convenes, staff and social media have already framed the story for you — and nobody wrote anything down.' },
-        { t: 'Activate the crisis management team now: open a decision log, assign roles, set the first meeting rhythm.', log: 'Activated crisis team, opened log', s: [2,0,1,0,0],
-          o: 'The team convenes by 09:05. Roles are clear, a log is running, and every decision from here is timed and defensible. You’ve bought back the golden hour.' },
-        { t: 'Pull the senior team together informally — no log or fixed roles until you know more.', log: 'Informal huddle, no log', s: [1,0,0,0,0],
-          o: 'The right people are in the room, but with no log and no roles, decisions get revisited, duplicated and lost. In three hours nobody can say who agreed what.' }
+        { t: 'Get the senior team onto a group chat and deal with issues as they come in.', log: 'Informal group chat, no log', s: [1,0,0,0,0],
+          o: 'The chat fills with photos of leaks and forwarded weather maps. Decisions get made, lost and remade — and by afternoon nobody can say who authorised what.' },
+        { t: 'Activate the incident management team now: open a decision log, assign roles, agree an update rhythm before the worst arrives.', log: 'Activated incident team, opened log', s: [2,0,1,0,0],
+          o: 'The team convenes by 06:45 — hours ahead of the worst of it. Roles are clear, a log is running, and you’re making decisions ahead of events instead of chasing them.' },
+        { t: 'Hold off — it may blow through. Review at 09:00 once there’s actual damage to assess.', log: 'Deferred until 09:00 review', s: [0,0,0,0,0],
+          o: 'By 09:00 the power is down and the car park is flooding. You’re activating the team in the dark — literally. The storm didn’t wait for your review.' }
       ]
     },
     {
-      time: '09:10', src: 'RECEPTION / COMMUNICATIONS',
-      msg: 'A trade journalist is on the phone asking directly whether you’ve been hit by ransomware. Meanwhile staff are speculating openly on social media — one post already has screenshots.',
-      note: 'In a vacuum, someone else writes your story. A short, honest holding statement — acknowledge, reassure, commit to updates — buys hours of control. “No comment” reads as confirmation; denial risks being disproven by teatime.',
+      time: '07:30', src: 'COMMUNICATIONS TEAM',
+      msg: 'Local radio wants to know which of your services are running today. The public are asking the same question on social media, the phone lines are jammed, and the answer is genuinely still changing by the minute.',
+      note: 'In a vacuum, someone else writes your story. The public will forgive closed services; they won’t forgive silence. A rhythm of imperfect-but-honest updates — what’s closed, what’s running, when you’ll update next — beats one perfect statement that arrives after everyone stopped listening.',
       opts: [
-        { t: 'Decline all comment and instruct staff not to discuss the incident.', log: 'No comment, staff gag', s: [0,0,0,0,0],
-          o: '“No comment” becomes the quote. The story runs anyway, sourced from staff screenshots, and now it has the word “secretive” in it.' },
-        { t: 'Deny it’s ransomware until forensics can confirm exactly what happened.', log: 'Denied ransomware', s: [0,0,0,0,0],
-          o: 'Forensics confirm ransomware at 14:00. Your morning denial is now part of the story — and every future statement gets fact-checked against it.' },
-        { t: 'Issue a short holding statement: we’re managing an IT incident, investigating, and will update by 12:00.', log: 'Holding statement issued', s: [0,2,0,0,1],
-          o: 'The journalist runs a measured piece quoting your statement. You’ve set the rhythm: you now owe an update at noon — and you control what’s in it.' }
+        { t: 'Wait until you have the full picture — one accurate statement at lunchtime beats three corrections.', log: 'Held comms for full picture', s: [0,0,0,0,0],
+          o: 'By lunchtime the vacuum has been filled — by rumour, a parody account, and a photo of your flooded car park. Your accurate statement arrives to an audience that’s stopped listening.' },
+        { t: 'Let staff answer queries as they come in — they know their own services best.', log: 'Staff answering ad hoc', s: [0,0,0,0,0],
+          o: 'Forty staff give forty answers. Two of them contradict each other on the same Facebook thread — and the radio quotes both.' },
+        { t: 'Publish what you know now — what’s closed, what’s running, where to get help — and commit to an update every two hours.', log: 'Published status, 2-hourly updates', s: [0,2,0,0,1],
+          o: 'The council shares your statement, the radio reads it out verbatim, and the phone lines ease. You’re now the single source of truth — and everyone knows when the next update lands.' }
       ]
     },
     {
-      time: '09:35', src: 'OPERATIONS MANAGER',
-      msg: 'We can keep priority orders moving on manual processes — paper picking lists, phone confirmations — but it needs overtime sign-off and we’ll run at about 40% capacity. Do we invoke the business continuity plan?',
-      note: 'Plans only pay out when someone invokes them. 40% capacity on your top customers beats 0% on everyone — and “IT might fix it by tonight” is a hope, not a plan. Invocation criteria decided in advance make this a 30-second call, not a 30-minute debate.',
+      time: '08:20', src: 'FACILITIES · SITE REPORT',
+      msg: 'Power is now fully down at your main site and the generator only covers emergency lighting and servers. Flood water is approaching the ground floor of the building where your busiest public-facing service runs. The power company can’t give a restoration time.',
+      note: 'Plans only pay out when someone invokes them. Pre-agreed invocation criteria and a known list of priority services turn this into a 30-second call instead of a meeting. And treat “the power should be back soon” as weather, not a plan — hope has no restoration time.',
       opts: [
-        { t: 'Invoke the BCP: manual processes for priority customers, overtime approved.', log: 'Invoked BCP, manual workaround', s: [1,0,2,0,0],
-          o: 'By 11:00, priority orders are moving. Slowly, imperfectly — but your biggest customers see deliveries, not silence.' },
-        { t: 'Halt all operations until systems are properly restored — safer than improvising.', log: 'Halted all operations', s: [0,0,0,0,0],
-          o: 'The line goes quiet. Every hour of clean shutdown is an hour your customers spend testing their alternative suppliers.' },
-        { t: 'Hold off — IT believe they might restore from backups by tonight.', log: 'Waited on backup restore', s: [0,0,0,0,0],
-          o: 'At 16:00 IT report the backups were encrypted too. You’ve lost the day, and the manual workaround now starts a shift behind.' }
+        { t: 'Invoke the business continuity plan: move priority services to the alternate site and remote working, stand the rest down.', log: 'Invoked BCP, relocated priority services', s: [1,0,2,0,0],
+          o: 'By 10:30 your critical services are running from the alternate site — reduced, imperfect, but running. The public sees continuity, not collapse.' },
+        { t: 'Suspend all services until the site is safe and power is restored — safety first.', log: 'Suspended all services', s: [0,0,0,0,0],
+          o: 'Total shutdown is certainly safe — and certainly visible. The people who rely on you most notice first, and loudest. Including the services you could have run remotely.' },
+        { t: 'Hold on — the power company hopes supply will be back within a few hours.', log: 'Waited on power restoration', s: [0,0,0,0,0],
+          o: 'At 15:00 “a few hours” becomes “tomorrow, possibly”. The day is gone, and the alternate site now has to be stood up in the dark.' }
       ]
     },
     {
-      time: '10:15', src: 'IT DIRECTOR · CRISIS ROOM',
-      msg: 'The demand is in: payment in 48 hours or the data goes public. Forensics say personal data — possibly including customer records — may have been accessed. Legal exposure is unclear.',
-      note: 'The regulatory clock doesn’t wait for certainty — the 72-hour assessment window starts when you become aware, not when you’re sure. Insurers can void cover if engaged late, and negotiating alone can do exactly that. Escalate outwards early: insurer, counsel, regulator assessment.',
+      time: '10:05', src: 'PARTNER AGENCIES · CONFERENCE LINE',
+      msg: 'Local responders have stood up a multi-agency coordination call — council, emergency services, utilities and the voluntary sector. You’re invited to join in twenty minutes, and asked to come with what support you need and what you can offer.',
+      note: 'No organisation rides out a storm alone. The multi-agency call is where scarce resources get allocated and where your closures reach official channels — but only if you’re present, senior enough to commit on the spot, and clear about what you need and what you can offer in return.',
       opts: [
-        { t: 'Open a direct line to the attackers to negotiate and buy time.', log: 'Negotiated with attackers', s: [0,0,0,0,0],
-          o: 'Your insurer later confirms that unauthorised negotiation breached the policy conditions. You’re now managing the incident — and the cover dispute.' },
-        { t: 'Notify the insurer and legal counsel now, and start the regulator’s 72-hour breach assessment clock.', log: 'Notified insurer, legal, regulator clock', s: [2,0,0,0,1],
-          o: 'The insurer assigns specialist responders within the hour; counsel takes the negotiation question off your desk. The regulatory position is documented from the start.' },
-        { t: 'Wait for forensics to confirm what was actually taken before telling anyone external.', log: 'Withheld external notification', s: [0,0,0,0,0],
-          o: 'Forensics take four days. The regulator’s first question is why the assessment started on day three of a 72-hour window.' }
+        { t: 'Send someone junior to listen in and take notes — the experienced people are all needed here.', log: 'Sent observer to partner call', s: [0,0,0,0,0],
+          o: 'Your representative takes excellent notes but can’t commit to anything. Generators, sandbags and volunteer support get allocated on the call — to organisations whose people could say yes.' },
+        { t: 'Join with a senior lead: give a concise situation report, ask for what you need, offer what you can spare.', log: 'Senior lead joined, sitrep given', s: [2,0,0,0,1],
+          o: 'Ten minutes of airtime gets you a generator by 13:00 and your service updates onto the council’s official channels. Partners now see you as part of the response — not a casualty of it.' },
+        { t: 'Decline — you can’t spare anyone mid-crisis. You’ll read the minutes later.', log: 'Declined partner call', s: [0,0,0,0,0],
+          o: 'The minutes arrive at 17:40. So does the discovery that emergency generators were allocated at 10:30 — to the organisations that were in the room.' }
       ]
     },
     {
-      time: '11:20', src: 'HR DIRECTOR',
-      msg: 'Staff are anxious and rumours are outrunning you: the canteen version says payroll data is stolen and Friday’s pay run will fail. Two people have asked if they should be freezing their bank cards.',
-      note: 'Your staff are your most credible channel — or your most damaging one. “What we know, what we don’t, when we’ll update you” works even with almost no facts. Cascades leak and mutate; silence gets filled by the canteen.',
+      time: '11:30', src: 'HR · STAFF WELFARE',
+      msg: 'Roads are starting to close and schools have shut early. Some staff can’t safely get home; others are anxious about children and elderly relatives. A rumour is going round that anyone leaving early will have to take it as annual leave.',
+      note: 'People can’t focus on the response while they’re worried about their own families — settle the welfare question early, explicitly and generously. And kill pay-and-leave rumours fast: nothing corrodes goodwill quicker, and goodwill is the fuel the rest of the response runs on.',
       opts: [
-        { t: 'Brief line managers only and let them cascade “as appropriate”.', log: 'Manager-only cascade', s: [0,0,0,1,0],
-          o: 'The cascade arrives unevenly — some teams get a careful briefing, others get corridor whispers. The payroll rumour survives in the gaps.' },
-        { t: 'Say nothing to staff until you’re certain what data was affected.', log: 'No staff comms yet', s: [0,0,0,0,0],
-          o: 'By mid-afternoon the rumour has jumped to a local Facebook group — posted by one of your own staff, asking if anyone else is worried.' },
-        { t: 'Brief all staff at 12:00: what we know, what we don’t, when the next update comes — and a firm commitment that pay will run.', log: 'All-staff briefing, pay guaranteed', s: [0,1,0,2,0],
-          o: 'The briefing lands. The payroll rumour dies in the room, and staff start correcting misinformation instead of spreading it.' }
+        { t: 'Ask line managers to use their judgement with their own teams.', log: 'Left to managers’ judgement', s: [0,0,0,1,0],
+          o: 'Judgement varies. One team is sent home at noon; the identical team next door is told to stay. Both find out about the other by 14:00.' },
+        { t: 'Everyone stays at their posts until a formal stand-down — it’s still a working day.', log: 'All staff held at posts', s: [0,0,0,0,0],
+          o: 'Staff watching the weather through the window stop listening to anything else you say. Two leave anyway — and now you have a discipline question on top of a storm.' },
+        { t: 'Message all staff: safety comes first, flexible arrangements today, nobody loses pay or leave — next update at 14:00.', log: 'All-staff message, pay protected', s: [0,1,0,2,0],
+          o: 'The annual-leave rumour dies within the hour. Several staff who make it safely home volunteer for phone duty — goodwill you didn’t have to ask for.' }
       ]
     },
     {
-      time: '13:30', src: 'SALES DIRECTOR · URGENT',
-      msg: 'Your largest customer — 28% of revenue — has seen the media coverage. Their procurement lead is asking, in writing, whether they should activate their alternative supplier “as a precaution”.',
-      note: 'Key accounts in a crisis need a person, not a press line. A senior, honest call — status, recovery plan, a named contact, a daily update — converts your biggest commercial risk into your most vocal reference. Discounts signal panic; boilerplate signals indifference.',
+      time: '14:45', src: 'COMMUNICATIONS · MEDIA CALL',
+      msg: 'A journalist is running a piece tonight claiming vulnerable people who rely on your services have been “left without help”, quoting a community group. A local politician has already shared it, asking publicly what you’re doing about it.',
+      note: 'When you’re accused of failing the people you serve, facts alone won’t save you — visible care will. Lead with what you’re doing for the people affected, put up a human, senior voice, and give the worried a route to help. Rebuttals read as defensiveness, even when they’re right.',
       opts: [
-        { t: 'The CEO calls their MD personally: honest status, the recovery plan, and a committed daily update.', log: 'CEO called key customer directly', s: [0,0,1,0,2],
-          o: 'The call lasts eleven minutes. They stay — and their procurement lead later tells your sales director it was the call, not the plan, that convinced them.' },
-        { t: 'Send them the same holding statement the press received.', log: 'Sent press statement to customer', s: [0,0,0,0,0],
-          o: 'A 28%-of-revenue customer gets the same paragraph as a trade blog. They activate their alternative supplier “temporarily”. Temporarily lasts three years.' },
-        { t: 'Offer a discount on their next order as a goodwill gesture.', log: 'Offered discount', s: [0,0,0,0,0],
-          o: 'The discount reads as desperation. Procurement pockets it — and activates the alternative supplier anyway, now at a better price.' }
+        { t: 'Issue a written rebuttal — the claim is inaccurate and you can prove it.', log: 'Issued rebuttal', s: [0,0,0,0,0],
+          o: 'You win the factual argument and lose the story. “Organisation disputes claim it abandoned vulnerable residents” is not the headline you wanted.' },
+        { t: 'Put a senior leader up this afternoon: what’s running, the welfare calls being made to priority service users, and a direct line for anyone worried.', log: 'Senior leader briefed media, welfare line opened', s: [0,0,1,0,2],
+          o: 'The piece runs with your leader’s quotes and the welfare-call numbers in the second paragraph. The community group’s follow-up post thanks your team for ringing their members back.' },
+        { t: 'Say nothing tonight; brief the politician privately tomorrow.', log: 'No comment, private briefing planned', s: [0,0,0,0,0],
+          o: 'The piece runs with “declined to comment”. By morning it has been shared four hundred times — and the politician has tabled a formal question.' }
       ]
     }
   ];
