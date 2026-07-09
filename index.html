@@ -116,6 +116,11 @@
     font-size: 15px;
   }
   .btn-ghost:hover { border-color: var(--dim); }
+  a.btn-primary { text-decoration: none; display: inline-block; }
+  .alt-contact { font-size: 13.5px; color: var(--dim); margin: 12px 0 0; }
+  .alt-contact b { color: var(--amber); font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .alt-contact b:hover { text-decoration: underline; }
+  .alt-contact b:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 
   /* ---------- simulation ---------- */
   .sim-head {
@@ -419,9 +424,12 @@
       </div>
 
       <div class="actions">
-        <button class="btn-primary" id="btnContact">Book a conversation</button>
+        <a class="btn-primary" id="btnContact" href="#">Book a conversation</a>
         <button class="btn-ghost" id="btnRetry">Run the exercise again</button>
       </div>
+      <p class="alt-contact">If nothing opens, email
+        <b id="mailText" role="button" tabindex="0" title="Click to copy the address"></b>
+        directly — click the address to copy it.</p>
     </div>
 
     <footer>
@@ -708,10 +716,21 @@
   $('btnStart').addEventListener('click', startExercise);
   $('btnNext').addEventListener('click', next);
   $('btnRetry').addEventListener('click', startExercise);
-  $('btnContact').addEventListener('click', () => {
-    // address kept split so it never appears whole in the page source (deters spam scrapers)
-    const E_U = 'helen', E_D = 'bcrconsultants.co.uk';
-    location.href = 'mailto:' + E_U + '@' + E_D + '?subject=' + encodeURIComponent('Crisis exercise enquiry — Exercise Mercury');
+  // address kept split so it never appears whole in the page source (deters spam scrapers)
+  const E_U = 'helen', E_D = 'bcrconsultants.co.uk';
+  const ADDR = E_U + '@' + E_D;
+  $('btnContact').href = 'mailto:' + ADDR + '?subject=' + encodeURIComponent('Crisis exercise enquiry — Exercise Mercury');
+  const mailText = $('mailText');
+  mailText.textContent = ADDR;
+  function copyAddr() {
+    navigator.clipboard.writeText(ADDR).then(() => {
+      mailText.textContent = 'Copied ✓';
+      setTimeout(() => { mailText.textContent = ADDR; }, 1600);
+    }).catch(() => {});
+  }
+  mailText.addEventListener('click', copyAddr);
+  mailText.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyAddr(); }
   });
 
   // keyboard: A/B/C to answer while options are visible
